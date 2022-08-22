@@ -2,21 +2,19 @@ package client
 
 import (
 	"context"
-	"log"
 	"time"
 
 	pb "github.com/mikelzuru/deezer/info"
+	"github.com/saltosystems/x/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func Search(cfg *Config) error {
-	//flag.Parse()
-	//c := GetSearcherClient(cfg)
+func Search(cfg *Config, logger log.Logger) error {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(*&cfg.Addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		logger.Error("did not connect: %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewSearcherClient(conn)
@@ -25,29 +23,11 @@ func Search(cfg *Config) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	var r *pb.BasicSearchResponse
-	//var err error
-	switch {
-	case cfg.Type == "artist":
-		r, err = c.Search(ctx, &pb.BasicSearchRequest{Query: *&cfg.Query})
-	default:
-		r, err = c.Search(ctx, &pb.BasicSearchRequest{Query: *&cfg.Query})
-	}
-
+	r, err := c.Search(ctx, &pb.BasicSearchRequest{Query: *&cfg.Query})
 	if err != nil {
-		log.Fatalf("could not search: %v", err)
+		logger.Error("could not search: %v", err)
 	}
-	log.Printf("Search response: %s", r.GetResponse())
+	logger.Info("Search response: %s", r.GetResponse())
 
 	return nil
-}
-
-func GetSearcherClient(cfg *Config) pb.SearcherClient {
-	// Set up a connection to the server.
-	conn, err := grpc.Dial(*&cfg.Addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	defer conn.Close()
-	return pb.NewSearcherClient(conn)
 }

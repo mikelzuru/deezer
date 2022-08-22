@@ -4,21 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"time"
 
 	pb "github.com/mikelzuru/deezer/info"
+	"github.com/saltosystems/x/log"
 	"google.golang.org/grpc"
 )
 
 var (
-	//port             = flag.Int("port", 50051, "The server port")
 	musicProviderUrl = "https://api.deezer.com/"
 )
 
-// server is used to implement helloworld.GreeterServer.
+// server is used to implement info.SearcherServer.
 type server struct {
 	pb.UnimplementedSearcherServer
 }
@@ -44,25 +43,19 @@ type DeezerData struct {
 
 // Search implements info.Searcher
 func (s *server) Search(ctx context.Context, in *pb.BasicSearchRequest) (*pb.BasicSearchResponse, error) {
-	log.Printf("Received: %v", in.GetQuery())
 	return &pb.BasicSearchResponse{Response: search(in.GetQuery())}, nil
 }
 
-// func (s *server) SayHelloAgain(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-// 	return &pb.HelloReply{Message: "Hello again " + in.GetName()}, nil
-// }
-
-func Create(cfg *Config) error {
-	//flag.Parse()
+func Create(cfg *Config, logger log.Logger) error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *cfg.ServerPort))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logger.Error("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterSearcherServer(s, &server{})
-	log.Printf("server listening at %v", lis.Addr())
+	logger.Info("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		logger.Error("failed to serve: %v", err)
 	}
 
 	return nil
@@ -74,7 +67,6 @@ func search(q string) string {
 
 	//Llamamos al proveedor de musica y obtenemos un JSON de respuesta
 	getJson(url, &deez)
-	fmt.Println("Track n1:", json2string(deez.Data[0]))
 	//Transformamos a un JSON con estructura reducida y devolvemos
 	return json2string(deez)
 }

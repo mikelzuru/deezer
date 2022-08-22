@@ -25,7 +25,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/mikelzuru/deezer_grpc/info"
+	pb "github.com/mikelzuru/deezer/info"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

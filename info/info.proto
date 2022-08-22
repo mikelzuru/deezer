@@ -22,8 +22,6 @@ package info;
 service Searcher {
   // Basic search
   rpc Search (BasicSearchRequest) returns (BasicSearchResponse) {}
-  // Search by album ID
-  //rpc SearchByAlbumId (AlbumSearchRequest) returns (AlbumSearchResponse) {}
 }
 
 // The request message containing the user's name.
