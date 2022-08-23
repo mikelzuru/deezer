@@ -4,5 +4,4 @@ package client
 type Config struct {
 	Addr  string
 	Query string
-	Type  string
 }

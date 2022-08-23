@@ -18,18 +18,18 @@ option go_package = "github.com/mikelzuru/deezer;info";
 
 package info;
 
-// The greeting service definition.
+// The searching service definition.
 service Searcher {
   // Basic search
   rpc Search (BasicSearchRequest) returns (BasicSearchResponse) {}
 }
 
-// The request message containing the user's name.
+// The request message containing the query to perform agains the music provider.
 message BasicSearchRequest {
   string query = 1;
 }
 
-// The response message containing the greetings
+// The response message containing the JSON formatted details
 message BasicSearchResponse {
   string response = 1;
 }

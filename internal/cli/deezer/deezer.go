@@ -33,7 +33,6 @@ func newSearchCommand(logger log.Logger) *subcommands.Command {
 	fs := flag.NewFlagSet("search", flag.ExitOnError)
 	fs.StringVar(&cfg.Addr, "addr", "localhost:50051", "the address to connect to")
 	fs.StringVar(&cfg.Query, "query", "hasselhoff", "Query to be performed agains music provider")
-	//fs.StringVar(&cfg.Type, "type", "raw", "Search type [raw, artist, song]")
 
 	return subcommands.NewCommand(fs.Name(), fs, func() error {
 		return client.Search(cfg, logger)
